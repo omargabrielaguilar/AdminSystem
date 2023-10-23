@@ -1,6 +1,6 @@
 package com.camber.user.service.services.impl;
 
-import com.camber.user.service.entities.UserEntity;
+import com.camber.user.service.entities.User;
 import com.camber.user.service.exceptions.ResourceNotFoundException;
 import com.camber.user.service.repositories.UserRepository;
 import com.camber.user.service.services.UserService;
@@ -18,7 +18,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public UserEntity saveUser(UserEntity user) {
+    public User saveUser(User user) {
 
         //genera unico userID
         String randomUserId = UUID.randomUUID().toString();
@@ -27,12 +27,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserEntity> getAllUser() {
+    public List<User> getAllUser() {
         return userRepository.findAll();
     }
 
     @Override
-    public UserEntity getUser(String userId) {
+    public User getUser(String userId) {
         return userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("Id de usuario no encontrado en el servidor!! " + userId));
     }
 }

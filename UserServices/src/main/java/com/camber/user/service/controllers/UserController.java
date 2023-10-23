@@ -1,6 +1,6 @@
 package com.camber.user.service.controllers;
 
-import com.camber.user.service.entities.UserEntity;
+import com.camber.user.service.entities.User;
 import com.camber.user.service.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,22 +17,22 @@ public class UserController {
 
     //create
     @PostMapping
-    public ResponseEntity<UserEntity> createUser(@RequestBody UserEntity user){
-        UserEntity userEntity = userService.saveUser(user);
+    public ResponseEntity<User> createUser(@RequestBody User user){
+        User userEntity = userService.saveUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(userEntity);
     }
 
     // Search user for id
     @GetMapping("/{userId}")
-    public ResponseEntity<UserEntity> getSinglesUser(@PathVariable String userId){
-        UserEntity userEntity = userService.getUser(userId);
+    public ResponseEntity<User> getSinglesUser(@PathVariable String userId){
+        User userEntity = userService.getUser(userId);
         return ResponseEntity.ok(userEntity);
     }
 
     // listar
     @GetMapping
-    public ResponseEntity<List<UserEntity>> getAllUser(){
-        List<UserEntity> allUser = userService.getAllUser();
+    public ResponseEntity<List<User>> getAllUser(){
+        List<User> allUser = userService.getAllUser();
         return ResponseEntity.ok(allUser);
     }
 
