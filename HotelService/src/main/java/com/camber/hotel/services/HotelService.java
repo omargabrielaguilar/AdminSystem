@@ -4,7 +4,7 @@ import com.camber.hotel.entities.Hotel;
 
 import java.util.List;
 
-public class HotelService {
+public interface HotelService {
     //create
     Hotel create(Hotel hotel);
 
