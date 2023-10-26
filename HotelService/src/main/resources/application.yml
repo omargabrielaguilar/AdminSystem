@@ -1,0 +1,13 @@
+server:
+  port: 8082
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/camber_hotel
+    username: postgres
+    password: mypass
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
