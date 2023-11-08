@@ -1,6 +1,7 @@
 package com.camber.rating.services;
 
 import com.camber.rating.entities.Rating;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
