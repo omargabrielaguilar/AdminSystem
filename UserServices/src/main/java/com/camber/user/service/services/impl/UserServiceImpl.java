@@ -1,14 +1,20 @@
 package com.camber.user.service.services.impl;
 
+import com.camber.user.service.entities.Rating;
 import com.camber.user.service.entities.User;
 import com.camber.user.service.exceptions.ResourceNotFoundException;
 import com.camber.user.service.repositories.UserRepository;
 import com.camber.user.service.services.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -16,6 +22,11 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
+    //para trabajar con rating
+    @Autowired
+    private RestTemplate restTemplate;
+
+    private Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Override
     public User saveUser(User user) {
@@ -28,11 +39,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getAllUser() {
+        //implementar Rating Service call: using rest template
         return userRepository.findAll();
     }
 
     @Override
     public User getUser(String userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("Id de usuario no encontrado en el servidor!! " + userId));
+        //obtener usuario desde la BD
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("Id de usuario no encontrado en el servidor!! " + userId));
+
+        //fetch rating
+        ArrayList<Rating> ratingsOfUser = restTemplate.getForObject("http://localhost:8083/ratings/users/"+user.getUserId(), ArrayList.class);
+        logger.info("{}",ratingsOfUser);
+
+        user.setRatings(ratingsOfUser);
+
+        return user;
     }
 }
