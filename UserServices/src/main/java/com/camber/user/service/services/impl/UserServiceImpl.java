@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -52,10 +53,12 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("Id de usuario no encontrado en el servidor!! " + userId));
 
         //fetch rating
-        ArrayList<Rating> ratingsOfUser = restTemplate.getForObject("http://localhost:8083/ratings/users/"+user.getUserId(), ArrayList.class);
+        Rating[] ratingsOfUser = restTemplate.getForObject("http://localhost:8083/ratings/users/"+user.getUserId(), Rating[].class);
         logger.info("{}",ratingsOfUser);
 
-        ratingsOfUser.stream().map(rating -> {
+        List<Rating> ratings = Arrays.stream(ratingsOfUser).toList();
+
+        List<Rating> ratingsList = ratings.stream().map(rating -> {
             //api call to hotel service to get the hole
             ResponseEntity<Hotel> forEntity = restTemplate.getForEntity("http://localhost:8082/hotels/"+rating.getHotelId(), Hotel.class);
 
@@ -69,7 +72,7 @@ public class UserServiceImpl implements UserService {
             return rating;
         }).collect(Collectors.toList());
 
-        user.setRatings(ratingsOfUser);
+        user.setRatings(ratingsList);
 
         return user;
     }
