@@ -4,6 +4,7 @@ import com.camber.user.service.entities.Hotel;
 import com.camber.user.service.entities.Rating;
 import com.camber.user.service.entities.User;
 import com.camber.user.service.exceptions.ResourceNotFoundException;
+import com.camber.user.service.external.service.HotelService;
 import com.camber.user.service.repositories.UserRepository;
 import com.camber.user.service.services.UserService;
 import org.slf4j.Logger;
@@ -29,6 +30,9 @@ public class UserServiceImpl implements UserService {
     //para trabajar con rating
     @Autowired
     private RestTemplate restTemplate;
+
+    @Autowired
+    private HotelService hotelService;
 
     private Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
@@ -60,9 +64,10 @@ public class UserServiceImpl implements UserService {
 
         List<Rating> ratingsList = ratings.stream().map(rating -> {
             //api call to hotel service to get the hole
+
             ResponseEntity<Hotel> forEntity = restTemplate.getForEntity("http://HOTEL-SERVICE/hotels/"+rating.getHotelId(), Hotel.class);
 
-            Hotel hotel =forEntity.getBody();
+            Hotel hotel = hotelService.getHotel(rating.getHotelId());
             logger.info("response status code: {}",forEntity.getStatusCode());
 
             // set the hotel to rating
