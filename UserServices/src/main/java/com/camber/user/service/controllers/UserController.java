@@ -31,22 +31,23 @@ public class UserController {
     }
 
     // Search user for id
+    int retryCount = 1;
     @GetMapping("/{userId}")
     //@CircuitBreaker(name = "ratingHotelBreaker", fallbackMethod = "ratingHotelFallback" )
     @Retry(name = "ratingHotelService", fallbackMethod = "ratingHotelFallback")
     public ResponseEntity<User> getSinglesUser(@PathVariable String userId){
         logger.info("Get single user handler: UserController");
+        logger.info("Retry count: {}", retryCount );
+        retryCount++;
         User userEntity = userService.getUser(userId);
         return ResponseEntity.ok(userEntity);
     }
 
 
     //crear el metodo fallbakc
-    int retryCount = 1;
     public ResponseEntity<User> ratingHotelFallback(String userId, Exception ex) {
         //logger.info("fallback esta siendo ejecutado porque los servicios están caidos: ", ex.getMessage());
-        logger.info("Retry count: {}", retryCount );
-        retryCount++;
+
         User user = User.builder()
                 .email("omareegab@gmail.com")
                 .name("Omar")
