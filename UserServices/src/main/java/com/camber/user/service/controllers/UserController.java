@@ -8,11 +8,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
 import java.util.List;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
+    private Logger logger = LoggerFactory.getLogger(UserController.class);
+
     @Autowired
     private UserService userService;
 
@@ -27,6 +33,7 @@ public class UserController {
     @GetMapping("/{userId}")
     @CircuitBreaker(name = "ratingHotelBreaker", fallbackMethod = "ratingHotelFallback" )
     public ResponseEntity<User> getSinglesUser(@PathVariable String userId){
+        logger.info("Get single user handler: UserController");
         User userEntity = userService.getUser(userId);
         return ResponseEntity.ok(userEntity);
     }
@@ -34,7 +41,14 @@ public class UserController {
 
     //crear el metodo fallbakc
     public ResponseEntity<User> ratingHotelFallback(String userId, Exception ex) {
-
+        logger.info("fallback esta siendo ejecutado porque los servicios están caidos: ", ex.getMessage());
+        User user = User.builder()
+                .email("omareegab@gmail.com")
+                .name("Omar")
+                .about("este usuario creado a prueba, el sistema esta en modo down")
+                .userId("141234")
+                .build();
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
 
