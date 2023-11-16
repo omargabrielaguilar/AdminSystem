@@ -14,11 +14,12 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
-  application:
-    name: USER-SERVICE
+#  application:
+#    name: USER-SERVICE
   config:
-    import: configserver: http://localhost:8085
-
+    import: configserver:http://localhost:8085
+  profiles:
+    active: prod
 
 #eureka:
 #  instance:
