@@ -3,6 +3,7 @@ package com.camber.user.service.controllers;
 import com.camber.user.service.entities.User;
 import com.camber.user.service.services.UserService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +32,8 @@ public class UserController {
 
     // Search user for id
     @GetMapping("/{userId}")
-    @CircuitBreaker(name = "ratingHotelBreaker", fallbackMethod = "ratingHotelFallback" )
+    //@CircuitBreaker(name = "ratingHotelBreaker", fallbackMethod = "ratingHotelFallback" )
+    @Retry(name = "ratingHotelService", fallbackMethod = "ratingHotelFallback")
     public ResponseEntity<User> getSinglesUser(@PathVariable String userId){
         logger.info("Get single user handler: UserController");
         User userEntity = userService.getUser(userId);
@@ -40,8 +42,11 @@ public class UserController {
 
 
     //crear el metodo fallbakc
+    int retryCount = 1;
     public ResponseEntity<User> ratingHotelFallback(String userId, Exception ex) {
-        logger.info("fallback esta siendo ejecutado porque los servicios están caidos: ", ex.getMessage());
+        //logger.info("fallback esta siendo ejecutado porque los servicios están caidos: ", ex.getMessage());
+        logger.info("Retry count: {}", retryCount );
+        retryCount++;
         User user = User.builder()
                 .email("omareegab@gmail.com")
                 .name("Omar")
