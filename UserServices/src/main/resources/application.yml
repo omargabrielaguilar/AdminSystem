@@ -2,6 +2,8 @@ server:
   port: 8081
 
 spring:
+  application:
+    name: USER-SERVICE
   datasource:
     url: jdbc:mysql://localhost:3306/camber_user
     username: root
@@ -14,12 +16,8 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
-#  application:
-#    name: USER-SERVICE
   config:
-    import: configserver:http://localhost:8085
-  profiles:
-    active: prod
+    import: optional:configserver:http://localhost:8085
 
 #eureka:
 #  instance:
