@@ -14,7 +14,6 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class User {
-
     @Id
     @Column(name = "ID")
     private String userId;
